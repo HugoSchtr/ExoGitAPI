@@ -8,8 +8,8 @@ import sys
 def search_query(keyword, gallica=False):
     """Effectue une requête http sur l'API de recherche SRU Gallica.
     Selon le terme de recherche, affiche le nombre de résultat.
-    Effectue une nouvelle requête http sur l'API SRU Gallica selon le choix de pagination.
-    Création d'une liste d'identifiants arks.
+    Effectue une nouvelle requête http sur l'API SRU Gallica selon le choix de pagination, affiche 10 résultats.
+    Création d'une liste de 10 identifiants arks.
 
     :param keyword: terme de recherche. Peut correspondre à plusieurs mots.
     :type keyword: str
@@ -34,7 +34,7 @@ def search_query(keyword, gallica=False):
     # On transforme la requête en arbre XML exploitable
     xml_object = etree.fromstring(r.content)
 
-    # On cherche la balise <srw:numberOfRecords> à l'aide d'une requête xpath. Prend en argument le nom de la balise et le namespace associé.
+    # On cherche la balise <srw:numberOfRecords> à l'aide d'une requête xpath. Prend en argument la requête xpath et le namespace associé.
     node_records = xml_object.xpath("//srw:numberOfRecords", namespaces={"srw": "http://www.loc.gov/zing/srw/"})
 
     # Transformation du noeud récupéré en str.
@@ -89,7 +89,7 @@ def ark_query(ark_list):
     Génère un lien permettant la visualisation du manifest avec universalviewer.io.
     Stockage des données dans une liste.
 
-    :param ark_list: liste contenant plusieurs identifiants ark
+    :param ark_list: liste d'identifiants ark
     :type ark_list: list
     :return: liste de listes qui contiennent chacune les métadonnées des id ark.
     :rtype: list
@@ -110,7 +110,7 @@ def ark_query(ark_list):
 
         """ Les métadonnées récupérées ne sont pas forcément présentes pour chaque id ark.
         la fonction any() permet de vérifier s'il existe une entrée {"label": "Title"}, grâce à une boucle
-         dans la liste "metadata" de dictionnaires. Si la métadonnée existe, *
+         dans la liste "metadata" de dictionnaires. Si la métadonnée existe,
         attribution de {"value": "value_title"} à une variable.
          Si la métadonnée n'est pas renseignée, on attribue 'no data' à la variable."""
         if any(dict['label'] == 'Title' for dict in data['metadata']):
@@ -153,9 +153,9 @@ def ark_query(ark_list):
 
 @click.group()
 def group():
-    """Requete http via l'API de recherche SRU Gallica. Recherche à partir des métadonnées par défaut.
+    """Requete http via l'API de recherche SRU Gallica. Recherche dans les métadonnées par défaut.
     Propose une pagination des résultats de recherche et récupère 10 identifiants ark.
-    Présente les métadonnées des identifiants arks récupérées,
+    Présente les métadonnées des identifiants arks récupérées dans la console,
     avec possibilité de les récupérer dans un fichier csv.
     """
 
@@ -170,6 +170,8 @@ def run(keyword, gallica, output_file):
 
     :param keyword: terme de recherche. Peut contenir plusieurs termes.
     :type keyword: str
+    :param gallica: si True, changer le paramètre query CQL "metadata" par défaut en "gallica".
+    :type gallica: bool
     :param output_file: nom du fichier de sortie csv
     :type output_file: str
     """
@@ -194,4 +196,3 @@ def run(keyword, gallica, output_file):
 
 if __name__ == "__main__":
     group()
-
