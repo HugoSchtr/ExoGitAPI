@@ -23,9 +23,11 @@ def search_query(keyword, gallica=False):
 
     # Requête http
     if gallica:
-        url_query = "https://gallica.bnf.fr/SRU?operation=searchRetrieve&version=1.2&maximumRecords=10&startRecord=1&query=dc.type%20any%20image%20and%20gallica%20all%20{0}".format(keyword)
+        url_query = "https://gallica.bnf.fr/SRU?operation=searchRetrieve&version=1.2&maximumRecords=10&startRecord=1&query=dc.type%20any%20image%20and%20gallica%20all%20{0}".format(
+            keyword)
     else:
-        url_query = "https://gallica.bnf.fr/SRU?operation=searchRetrieve&version=1.2&maximumRecords=10&startRecord=1&query=dc.type%20any%20image%20and%20metadata%20all%20{0}".format(keyword)
+        url_query = "https://gallica.bnf.fr/SRU?operation=searchRetrieve&version=1.2&maximumRecords=10&startRecord=1&query=dc.type%20any%20image%20and%20metadata%20all%20{0}".format(
+            keyword)
     print("Fetching: {0}".format(url_query))
     r = requests.get(url_query)
 
@@ -44,7 +46,8 @@ def search_query(keyword, gallica=False):
         print(node_record)
         start_record = 1
     elif int(node_record) > 10:
-        print("Il y a {0} records. A partir de quel record souhaitez-vous paginer la recherche ?".format(str(node_record)))
+        print("Il y a {0} records. A partir de quel record souhaitez-vous paginer la recherche ?".format(
+            str(node_record)))
         start_record = int(input("-> "))
     else:
         print("Aucun résultat")
@@ -52,9 +55,11 @@ def search_query(keyword, gallica=False):
 
     # Nouvelle requête http permettant de paginer selon le choix de l'utilisateur.rice avec start_record.
     if gallica:
-        url_query = "https://gallica.bnf.fr/SRU?operation=searchRetrieve&version=1.2&maximumRecords=10&startRecord={0}&query=dc.type%20any%20image%20and%20gallica%20all%20{1}".format(str(start_record), keyword)
+        url_query = "https://gallica.bnf.fr/SRU?operation=searchRetrieve&version=1.2&maximumRecords=10&startRecord={0}&query=dc.type%20any%20image%20and%20gallica%20all%20{1}".format(
+            str(start_record), keyword)
     else:
-        url_query = "https://gallica.bnf.fr/SRU?operation=searchRetrieve&version=1.2&maximumRecords=10&startRecord={0}&query=dc.type%20any%20image%20and%20metadata%20all%20{1}".format(str(start_record), keyword)
+        url_query = "https://gallica.bnf.fr/SRU?operation=searchRetrieve&version=1.2&maximumRecords=10&startRecord={0}&query=dc.type%20any%20image%20and%20metadata%20all%20{1}".format(
+            str(start_record), keyword)
     print("Fetching: {0}".format(url_query))
     r = requests.get(url_query)
 
@@ -76,6 +81,7 @@ def search_query(keyword, gallica=False):
         print("Aucun identifiant ark pour la pagination choisie.")
 
     return ark_list
+
 
 def ark_query(ark_list):
     """Effectue une requête http sur l'API IIIF Gallica à partir d'une liste d'identifiants ark.
@@ -112,7 +118,7 @@ def ark_query(ark_list):
                 if dict['label'] == 'Title':
                     title = dict['value']
         else:
-            creator = "no data"
+            title = "no data"
 
         if any(dict['label'] == 'Creator' for dict in data['metadata']):
             for dict in data['metadata']:
@@ -122,6 +128,7 @@ def ark_query(ark_list):
                     elif type(dict['value']) == list:
                         for sub_dict in dict['value']:
                             creator += sub_dict["@value"] + " ; "
+                            creator = creator[:-3]
         else:
             creator = "no data"
 
@@ -133,6 +140,7 @@ def ark_query(ark_list):
                     elif type(dict['value']) == list:
                         for sub_dict in dict['value']:
                             date += sub_dict["@value"] + " ; "
+                            date = date[:-3]
         else:
             date = "no data"
 
@@ -186,3 +194,4 @@ def run(keyword, gallica, output_file):
 
 if __name__ == "__main__":
     group()
+
