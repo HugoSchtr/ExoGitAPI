@@ -13,6 +13,8 @@ def search_query(keyword, gallica=False):
 
     :param keyword: terme de recherche. Peut correspondre à plusieurs mots.
     :type keyword: str
+    :param gallica: si True, changer le paramètre query CQL "metadata" par défaut en "gallica".
+    :type gallica: bool
     :return: liste des identifiants ark de la recherche.
     :rtype: list
     """
